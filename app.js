@@ -4,6 +4,22 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host     : process.env.OPENSHIFT_MYSQL_DB_HOST || 'localhost',
+  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'me',
+  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'secret'
+});
+
+connection.connect(function(err) {
+  if (err) {
+    console.error('Error connecting to database.');
+    return;
+  }
+
+  console.log('Connected to database.');
+});
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -17,6 +33,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
+app.use(function(req, res, next) {
+  req.db = connection;
+  next();
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

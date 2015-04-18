@@ -29,7 +29,7 @@ router.post('/:user/:resource/off', function(req, res, next) {
 
 router.get('/:user/:resource/hooks', function(req, res, next) {
   req.db.query(
-    '',
+    'SELECT * FROM ',
     function(err, rows, fields) {
       res.json(rows);
     }
