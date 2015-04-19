@@ -2,6 +2,12 @@ var bcrypt = require('bcrypt');
 var express = require('express');
 var router = express.Router();
 
+var http = require('http');
+
+function notifyAboutStateChange(url) {
+  http.get(url);
+}
+
 router.post('/', function(req, res, next) {
   var hash = bcrypt.hashSync(req.body.password, 10);
 
@@ -107,6 +113,9 @@ router.post('/:user/:resource/toggle', function(req, res, next) {
             if (err) {
               next(new Error("No such resource."));
             } else {
+              for (var row in rows) {
+                notifyAboutStateChange(row.url);
+              }
               res.json({
                 success: true
               });
@@ -126,6 +135,9 @@ router.post('/:user/:resource/on', function(req, res, next) {
       if (err) {
         next(new Error("some error"));
       } else {
+        for (var row in rows) {
+          notifyAboutStateChange(row.url);
+        }
         res.json({
           success: true
         });
@@ -142,6 +154,9 @@ router.post('/:user/:resource/off', function(req, res, next) {
       if (err) {
         next(new Error("some error"));
       } else {
+        for (var row in rows) {
+          notifyAboutStateChange(row.url);
+        }
         res.json({
           success: true
         });
