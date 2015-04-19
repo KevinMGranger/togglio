@@ -7,9 +7,10 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({
-  host     : process.env.OPENSHIFT_MYSQL_DB_HOST || 'localhost',
-  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'me',
-  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'secret'
+  host: process.env.OPENSHIFT_MYSQL_DB_HOST || 'localhost',
+  user: process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'root',
+  password: process.env.OPENSHIFT_MYSQL_DB_PASSWORD || '',
+  database: process.env.OPENSHIFT_MYSQL_DATABASE || 'togglio'
 });
 
 connection.connect(function(err) {
@@ -26,6 +27,11 @@ var users = require('./routes/users');
 
 var app = express();
 
+app.use(function(req, res, next) {
+  req.db = connection;
+  next();
+});
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -33,11 +39,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-
-app.use(function(req, res, next) {
-  req.db = connection;
-  next();
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -64,9 +65,8 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
+  res.json({
+    error: err.message
   });
 });
 

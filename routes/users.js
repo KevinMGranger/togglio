@@ -1,14 +1,58 @@
+var bcrypt = require('bcrypt');
 var express = require('express');
 var router = express.Router();
 
 router.post('/', function(req, res, next) {
-  console.log(req.body);
-  res.json({ success: true });
+  var hash = bcrypt.hashSync(req.body.password, 10);
+
+  req.db.query(
+    'INSERT INTO users SET ?',
+    {
+      username: req.body.username,
+      hash: hash
+    },
+    function(err, result) {
+      if (err) {
+        res.json({
+          error: err
+        });
+      } else {
+        res.json({ success: true, id: result.insertId });
+      }
+    }
+  );
+});
+
+router.post('/login', function(req, res, next) {
+  req.db.query(
+    'SELECT * FROM users WHERE username = ?',
+    [req.body.username],
+    function(err, results) {
+      if (err) {
+        res.json({
+          error: err
+        });
+      } else {
+        if (results.length === 0) {
+          res.json({
+            error: "Invalid username and/or password."
+          });
+        }
+
+        var result = results[0];
+        var storedHash = result.hash;
+
+        res.json({
+          success: bcrypt.compareSync(req.body.password, storedHash)
+        });
+      }
+    }
+  );
 });
 
 router.get('/:user/resources', function(req, res, next) {
   req.db.query(
-    'SELECT resourceName, statusID FROM resources WHERE userId = ?',
+    'SELECT resourceName, statusID FROM resources WHERE userID = ?',
     [req.params.user],
     function(err, rows, fields) {
       res.json(rows);
