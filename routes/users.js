@@ -11,18 +11,16 @@ function notifyAboutStateChange(url) {
 
 function runHooks(db, resource) {
   db.query(
-      'SELECT url FROM hooks JOIN resources WHERE resourceName = ?',
-      resource,
-      function(err, results) {
-        console.log("urls: ");
-        console.log(results);
-        for (var i in results) {
-          var row = results[i];
-          notifyAboutStateChange(row.url);
-        }
+    'SELECT url FROM hooks JOIN resources WHERE resourceName = ?',
+    resource,
+    function(err, results) {
+      console.log("urls: ");
+      console.log(results);
+      for (var i in results) {
+        var row = results[i];
+        notifyAboutStateChange(row.url);
       }
-    }
-  );
+    });
 }
 
 router.post('/', function(req, res, next) {
