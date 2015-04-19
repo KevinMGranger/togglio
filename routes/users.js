@@ -4,20 +4,22 @@ var router = express.Router();
 
 var http = require('http');
 
-function notifyAboutStateChange() {
+function notifyAboutStateChange(url) {
   console.log("Getting " + url);
   http.get(url);
 }
 
 function runHooks(db, resource) {
   db.query(
-    'SELECT url FROM hooks JOIN resources WHERE resourceName = ?',
-    resource,
-    function(err, results) {
-      console.log("urls: ");
-      console.log(results);
-      for (var row in results) {
-        notifyAboutStateChange(row.url);
+      'SELECT url FROM hooks JOIN resources WHERE resourceName = ?',
+      resource,
+      function(err, results) {
+        console.log("urls: ");
+        console.log(results);
+        for (var i in results) {
+          var row = results[i];
+          notifyAboutStateChange(row.url);
+        }
       }
     }
   );
