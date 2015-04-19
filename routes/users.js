@@ -5,6 +5,7 @@ var router = express.Router();
 var http = require('http');
 
 function notifyAboutStateChange(url) {
+  console.log("Getting " + url);
   http.get(url);
 }
 
