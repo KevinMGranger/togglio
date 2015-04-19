@@ -27,7 +27,11 @@ router.post('/:user/resources', function(req, res, next) {
     'INSERT INTO resources SET ?',
     record,
     function(err, rows, fields) {
-
+      if (err) {
+        next(new Error("Failed to create resource."));
+      } else {
+        res.json({ success: true });
+      }
     }
   );
 });
