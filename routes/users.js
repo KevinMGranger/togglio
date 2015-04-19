@@ -80,6 +80,19 @@ router.post('/:user/resources', function(req, res, next) {
   );
 });
 
+router.get('/:user/:resource', function(req, res, next) {
+  req.db.query(
+    'SELECT * FROM resources JOIN status ON resources.statusID = status.statusID WHERE resources.resourceName = ?',
+    req.params.resource,
+    function(err, rows, fields) {
+      if (err) {
+        next(new Error("No such resource."));
+      } else {
+        res.json(rows);
+      }
+    });
+});
+
 router.post('/:user/:resource/toggle', function(req, res, next) {
   console.log('post resource/toggle');
 });
