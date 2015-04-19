@@ -118,6 +118,7 @@ router.post('/:user/:resource/toggle', function(req, res, next) {
     'SELECT * FROM resources WHERE resourceName = ?',
     req.params.resource,
     function(err, rows, fields) {
+      var initialResult = rows[0];
       if (err) {
         next(new Error("No such resource."));
       } else {
@@ -131,7 +132,7 @@ router.post('/:user/:resource/toggle', function(req, res, next) {
               runHooks(req.db, req.params.resource);
               res.json({
                 success: true,
-                state: !rows[0].state
+                state: !initialResult.state
               });
             }
           }
