@@ -1,0 +1,31 @@
+CREATE TABLE users (
+	userID INTEGER PRIMARY KEY AUTO_INCREMENT,
+	username VARCHAR(128) NOT NULL,
+	`password` VARCHAR(255) NOT NULL,
+	salty VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE status (
+	statusID INTEGER PRIMARY KEY AUTO_INCREMENT,
+	statusName VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE resources (
+	resourceID INTEGER PRIMARY KEY AUTO_INCREMENT,
+	userID INTEGER NOT NULL,
+	resourceName VARCHAR(255),
+	statusID INTEGER NOT NULL,
+
+	FOREIGN KEY (userID) REFERENCES users(userID),
+	FOREIGN KEY (statusID) REFERENCES status(statusID)
+);
+
+CREATE TABLE resourcePossibleStatuses (
+	resourceID INTEGER NOT NULL,
+	statusID INTEGER NOT NULL,
+
+	PRIMARY KEY (resourceID, statusID),
+
+	FOREIGN KEY (resourceID) REFERENCES resources(resourceID),
+	FOREIGN KEY (statusID) REFERENCES status(statusID)
+);
