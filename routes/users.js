@@ -4,10 +4,25 @@ var router = express.Router();
 
 var http = require('http');
 
-function notifyAboutStateChange(url) {
+function notifyAboutStateChange() {
   console.log("Getting " + url);
   http.get(url);
 }
+
+function runHooks(db, resource) {
+  db.query(
+      'SELECT url FROM hooks JOIN resources WHERE resourceName = ?',
+      resource,
+      function(err, results) {
+        console.log("urls: ");
+        console.log(results);
+        for (var row in results) {
+          notifyAboutStateChange(row.url);
+        }
+      }
+      );
+}
+
 
 router.post('/', function(req, res, next) {
   var hash = bcrypt.hashSync(req.body.password, 10);
@@ -114,9 +129,7 @@ router.post('/:user/:resource/toggle', function(req, res, next) {
             if (err) {
               next(new Error("No such resource."));
             } else {
-              for (var row in rows) {
-                notifyAboutStateChange(row.url);
-              }
+              runHooks(req.db, req.params.resource);
               res.json({
                 success: true
               });
@@ -136,9 +149,7 @@ router.post('/:user/:resource/on', function(req, res, next) {
       if (err) {
         next(new Error("some error"));
       } else {
-        for (var row in rows) {
-          notifyAboutStateChange(row.url);
-        }
+              runHooks(req.db, req.params.resource);
         res.json({
           success: true
         });
@@ -155,9 +166,7 @@ router.post('/:user/:resource/off', function(req, res, next) {
       if (err) {
         next(new Error("some error"));
       } else {
-        for (var row in rows) {
-          notifyAboutStateChange(row.url);
-        }
+              runHooks(req.db, req.params.resource);
         res.json({
           success: true
         });
