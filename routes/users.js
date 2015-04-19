@@ -94,15 +94,61 @@ router.get('/:user/:resource', function(req, res, next) {
 });
 
 router.post('/:user/:resource/toggle', function(req, res, next) {
-  console.log('post resource/toggle');
+  req.db.query(
+    'SELECT * FROM resources WHERE resourceName = ?',
+    req.params.resource,
+    function(err, rows, fields) {
+      if (err) {
+        next(new Error("No such resource."));
+      } else {
+        req.db.query(
+          'UPDATE resources SET state = ? WHERE resourceName = ?',
+          [!rows[0].state, req.params.resource],
+          function(err, rows, fields) {
+            if (err) {
+              next(new Error("No such resource."));
+            } else {
+              res.json({
+                success: true
+              });
+            }
+          }
+        );
+      }
+    }
+  );
 });
 
 router.post('/:user/:resource/on', function(req, res, next) {
-  console.log('on');
+  req.db.query(
+    'UPDATE resources SET state = true WHERE resourceName = ?',
+    req.params.resource,
+    function(err, rows, fields) {
+      if (err) {
+        next(new Error("some error"));
+      } else {
+        res.json({
+          success: true
+        });
+      }
+    }
+  );
 });
 
 router.post('/:user/:resource/off', function(req, res, next) {
-  console.log('off');
+  req.db.query(
+    'UPDATE resources SET state = false WHERE resourceName = ?',
+    req.params.resource,
+    function(err, rows, fields) {
+      if (err) {
+        next(new Error("some error"));
+      } else {
+        res.json({
+          success: true
+        });
+      }
+    }
+  );
 });
 
 router.get('/:user/:resource/hooks', function(req, res, next) {
