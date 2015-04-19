@@ -52,7 +52,7 @@ router.post('/login', function(req, res, next) {
 
 router.get('/:user/resources', function(req, res, next) {
   req.db.query(
-    'SELECT resourceName, statusID FROM resources WHERE userID = ?',
+    'SELECT resourceName, state FROM resources WHERE userID = ?',
     [req.params.user],
     function(err, rows, fields) {
       res.json(rows);
@@ -63,8 +63,7 @@ router.get('/:user/resources', function(req, res, next) {
 router.post('/:user/resources', function(req, res, next) {
   var record = {
     userID: req.params.user,
-    resourceName: req.body.resource,
-    statusID: 0
+    resourceName: req.body.resource
   };
 
   req.db.query(
