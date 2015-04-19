@@ -152,7 +152,11 @@ router.post('/:user/:resource/off', function(req, res, next) {
 
 router.get('/:user/:resource/hooks', function(req, res, next) {
   req.db.query(
-    'SELECT * FROM ',
+    'SELECT * FROM hooks JOIN resources USING(resourceID) WHERE ?',
+    {
+	    userID: req.params.user,
+	    resourceName: req.params.resource
+    },
     function(err, rows, fields) {
       res.json(rows);
     }
