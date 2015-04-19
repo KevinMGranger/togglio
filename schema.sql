@@ -7,7 +7,8 @@ CREATE TABLE users (
 
 CREATE TABLE status (
 	statusID INTEGER PRIMARY KEY AUTO_INCREMENT,
-	statusName VARCHAR(255) NOT NULL
+	statusName VARCHAR(255) NOT NULL,
+  resourceID INTEGER NOT NULL
 );
 
 CREATE TABLE resources (
@@ -20,12 +21,4 @@ CREATE TABLE resources (
 	FOREIGN KEY (statusID) REFERENCES status(statusID)
 );
 
-CREATE TABLE resourcePossibleStatuses (
-	resourceID INTEGER NOT NULL,
-	statusID INTEGER NOT NULL,
-
-	PRIMARY KEY (resourceID, statusID),
-
-	FOREIGN KEY (resourceID) REFERENCES resources(resourceID),
-	FOREIGN KEY (statusID) REFERENCES status(statusID)
-);
+ALTER TABLE status ADD CONSTRAINT FOREIGN KEY (resourceID) REFERENCES resources (resourceID);
