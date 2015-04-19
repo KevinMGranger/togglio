@@ -11,18 +11,17 @@ function notifyAboutStateChange() {
 
 function runHooks(db, resource) {
   db.query(
-      'SELECT url FROM hooks JOIN resources WHERE resourceName = ?',
-      resource,
-      function(err, results) {
-        console.log("urls: ");
-        console.log(results);
-        for (var row in results) {
-          notifyAboutStateChange(row.url);
-        }
+    'SELECT url FROM hooks JOIN resources WHERE resourceName = ?',
+    resource,
+    function(err, results) {
+      console.log("urls: ");
+      console.log(results);
+      for (var row in results) {
+        notifyAboutStateChange(row.url);
       }
-      );
+    }
+  );
 }
-
 
 router.post('/', function(req, res, next) {
   var hash = bcrypt.hashSync(req.body.password, 10);
@@ -131,7 +130,8 @@ router.post('/:user/:resource/toggle', function(req, res, next) {
             } else {
               runHooks(req.db, req.params.resource);
               res.json({
-                success: true
+                success: true,
+                state: !rows[0].state
               });
             }
           }
