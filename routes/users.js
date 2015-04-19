@@ -82,7 +82,7 @@ router.post('/:user/resources', function(req, res, next) {
 
 router.get('/:user/:resource', function(req, res, next) {
   req.db.query(
-    'SELECT * FROM resources JOIN status ON resources.statusID = status.statusID WHERE resources.resourceName = ?',
+    'SELECT * FROM resources WHERE resourceName = ?',
     req.params.resource,
     function(err, rows, fields) {
       if (err) {
