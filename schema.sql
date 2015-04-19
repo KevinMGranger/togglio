@@ -22,3 +22,11 @@ CREATE TABLE resources (
 );
 
 ALTER TABLE status ADD CONSTRAINT FOREIGN KEY (resourceID) REFERENCES resources (resourceID);
+
+CREATE TABLE hooks (
+  hookID INTEGER PRIMARY KEY AUTO_INCREMENT,
+  url VARCHAR(255) NOT NULL,
+  resourceID INTEGER NOT NULL,
+
+  FOREIGN KEY (resourceID) REFERENCES resources(resourceID)
+);
